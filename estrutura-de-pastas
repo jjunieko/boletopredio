@@ -1,0 +1,18 @@
+sistema-boletos/
+├── node_modules/
+├── public/
+│   ├── index.html
+│   └── manifest.json
+└── src/
+    ├── components/
+    │   ├── Layout/
+    │   │   └── Sidebar.jsx
+    │   ├── Dashboard/
+    │   └── Boletos/
+    ├── pages/
+    │   └── Boletos.jsx
+    ├── services/
+    ├── styles/
+    ├── App.jsx
+    ├── index.js
+    └── index.css 
