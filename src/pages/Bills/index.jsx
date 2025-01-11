@@ -159,13 +159,13 @@ const Bills = () => {
         alignItems: 'center',
         mb: 3 
       }}>
-        <Typography variant="h4">Bills</Typography>
+        <Typography variant="h4">Boletos</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setOpen(true)}
         >
-          New Bill
+          Novo Boleto
         </Button>
       </Box>
 
@@ -178,13 +178,13 @@ const Bills = () => {
                   {bill.building}
                 </Typography>
                 <Typography variant="body1">
-                  Block {bill.block} - Apt {bill.apartment}
+                  Bloco {bill.block} - Apto {bill.apartment}
                 </Typography>
                 <Typography variant="h5" sx={{ mt: 2, color: 'primary.dark' }}>
                   {bill.value}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Due Date: {new Date(bill.dueDate).toLocaleDateString()}
+                  Vencimento: {new Date(bill.dueDate).toLocaleDateString()}
                 </Typography>
               </CardContent>
               <CardActions>
@@ -197,7 +197,7 @@ const Bills = () => {
                     setOpen(true);
                   }}
                 >
-                  Edit
+                  Editar
                 </Button>
                 <Button 
                   size="small" 
@@ -205,7 +205,7 @@ const Bills = () => {
                   startIcon={<DeleteIcon />}
                   onClick={() => handleDelete(bill.id)}
                 >
-                  Delete
+                  Excluir
                 </Button>
               </CardActions>
             </Card>
@@ -220,7 +220,7 @@ const Bills = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingBill ? 'Edit Bill' : 'New Bill'}
+          {editingBill ? 'Editar Boleto' : 'Novo Boleto'}
         </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ mt: 2 }}>
@@ -228,43 +228,43 @@ const Bills = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Building"
+                  label="Edifício"
                   name="building"
                   value={newBill.building}
                   onChange={handleInputChange}
                   error={!!errors.building}
-                  helperText={errors.building}
+                  helperText={errors.building || 'Campo obrigatório'}
                   required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Block"
+                  label="Bloco"
                   name="block"
                   value={newBill.block}
                   onChange={handleInputChange}
                   error={!!errors.block}
-                  helperText={errors.block}
+                  helperText={errors.block || 'Campo obrigatório'}
                   required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Apartment"
+                  label="Apartamento"
                   name="apartment"
                   value={newBill.apartment}
                   onChange={handleInputChange}
                   error={!!errors.apartment}
-                  helperText={errors.apartment}
+                  helperText={errors.apartment || 'Campo obrigatório'}
                   required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Complement"
+                  label="Complemento"
                   name="complement"
                   value={newBill.complement}
                   onChange={handleInputChange}
@@ -273,19 +273,19 @@ const Bills = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Full Name"
+                  label="Nome Completo"
                   name="fullName"
                   value={newBill.fullName}
                   onChange={handleInputChange}
                   error={!!errors.fullName}
-                  helperText={errors.fullName}
+                  helperText={errors.fullName || 'Campo obrigatório'}
                   required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Last Name"
+                  label="Sobrenome"
                   name="lastName"
                   value={newBill.lastName}
                   onChange={handleInputChange}
@@ -294,25 +294,25 @@ const Bills = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Value"
+                  label="Valor"
                   name="value"
                   value={newBill.value}
                   onChange={handleInputChange}
                   error={!!errors.value}
-                  helperText={errors.value}
+                  helperText={errors.value || 'Campo obrigatório'}
                   required
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Due Date"
+                  label="Data de Vencimento"
                   name="dueDate"
                   type="date"
                   value={newBill.dueDate}
                   onChange={handleInputChange}
                   error={!!errors.dueDate}
-                  helperText={errors.dueDate}
+                  helperText={errors.dueDate || 'Campo obrigatório'}
                   required
                   InputLabelProps={{
                     shrink: true,
@@ -322,12 +322,12 @@ const Bills = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Document"
+                  label="CPF"
                   name="document"
                   value={newBill.document}
                   onChange={handleInputChange}
                   error={!!errors.document}
-                  helperText={errors.document}
+                  helperText={errors.document || 'Campo obrigatório'}
                   required
                   inputProps={{
                     maxLength: 14
@@ -337,7 +337,7 @@ const Bills = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Phone"
+                  label="Telefone"
                   name="phone"
                   value={newBill.phone}
                   onChange={handleInputChange}
@@ -352,9 +352,9 @@ const Bills = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>Cancelar</Button>
           <Button variant="contained" onClick={handleSubmit}>
-            {editingBill ? 'Update' : 'Save'}
+            {editingBill ? 'Atualizar' : 'Salvar'}
           </Button>
         </DialogActions>
       </Dialog>

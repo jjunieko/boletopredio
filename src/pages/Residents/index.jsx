@@ -8,7 +8,8 @@ import {
   Card,
   CardContent,
   CardActions,
-  Button
+  Button,
+  Chip
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { billService } from '../../services/billService';
@@ -33,42 +34,66 @@ const Residents = () => {
     navigate(`/residents/${billId}`);
   };
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
   return (
-    <Container>
+    <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" gutterBottom>
-          My Bills
+          Meus Boletos
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          View and download your bills
+          Visualize e baixe seus boletos
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
         {userBills.map((bill) => (
           <Grid item xs={12} sm={6} md={4} key={bill.id}>
-            <Card>
-              <CardContent>
+            <Card 
+              sx={{ 
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="h6" color="primary" gutterBottom>
                   {bill.building}
                 </Typography>
-                <Typography variant="body1">
-                  Block {bill.block} - Apt {bill.apartment}
+                <Typography variant="body1" gutterBottom>
+                  Bloco {bill.block} - Apto {bill.apartment}
                 </Typography>
-                <Typography variant="h5" sx={{ mt: 2, color: 'primary.dark' }}>
-                  {bill.value}
+                <Typography variant="h5" sx={{ mt: 2, mb: 1, color: 'primary.dark' }}>
+                  {formatCurrency(bill.value)}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Due Date: {new Date(bill.dueDate).toLocaleDateString()}
-                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Chip 
+                    label={`Vencimento: ${new Date(bill.dueDate).toLocaleDateString()}`}
+                    color="default"
+                    size="small"
+                  />
+                  {new Date(bill.dueDate) < new Date() && (
+                    <Chip 
+                      label="Vencido"
+                      color="error"
+                      size="small"
+                    />
+                  )}
+                </Box>
               </CardContent>
               <CardActions>
                 <Button 
-                  fullWidth 
+                  fullWidth
                   variant="contained"
                   onClick={() => handleBillClick(bill.id)}
                 >
-                  View Details
+                  Visualizar Detalhes
                 </Button>
               </CardActions>
             </Card>
@@ -77,9 +102,20 @@ const Residents = () => {
       </Grid>
 
       {userBills.length === 0 && (
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="h6" color="text.secondary">
-            No bills found
+        <Box 
+          sx={{ 
+            textAlign: 'center', 
+            mt: 4,
+            p: 4,
+            bgcolor: 'background.paper',
+            borderRadius: 1
+          }}
+        >
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            Nenhum boleto encontrado
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Você não possui boletos para visualização no momento
           </Typography>
         </Box>
       )}

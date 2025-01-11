@@ -23,8 +23,8 @@ const LanguageSelector = () => {
           },
         }}
       >
-        <MenuItem value="en">English</MenuItem>
         <MenuItem value="pt">Português</MenuItem>
+        <MenuItem value="en">English</MenuItem>
         <MenuItem value="es">Español</MenuItem>
       </Select>
     </Box>

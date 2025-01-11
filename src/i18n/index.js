@@ -14,10 +14,20 @@ i18n
       pt,
       es,
     },
-    fallbackLng: 'en',
+    fallbackLng: 'pt',
+    lng: 'pt',
+    detection: {
+      order: ['localStorage', 'navigator'],
+      lookupLocalStorage: 'i18nextLng',
+      caches: ['localStorage'],
+    },
     interpolation: {
       escapeValue: false,
     },
   });
+
+if (!localStorage.getItem('i18nextLng')) {
+  i18n.changeLanguage('pt');
+}
 
 export default i18n; 
