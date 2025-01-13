@@ -25,6 +25,8 @@ import {
 } from '@mui/icons-material';
 import { billService } from '../../services/billService';
 import { validators } from '../../utils/validators';
+import Loading from '../../components/Loading';
+import { formatters } from '../../utils/formatters';
 
 const Bills = () => {
   const [open, setOpen] = useState(false);
@@ -44,20 +46,34 @@ const Bills = () => {
     document: '',
     phone: ''
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setBills(billService.getAllBills());
+    const loadBills = async () => {
+      try {
+        setIsLoading(true);
+        const data = billService.getAllBills();
+        setBills(data);
+      } catch (error) {
+        console.error('Erro ao carregar boletos:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBills();
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    // Apply specific formatting for document and phone
     if (name === 'document') {
       formattedValue = validators.cpf.format(value);
     } else if (name === 'phone') {
       formattedValue = validators.telefone.format(value);
+    } else if (name === 'value') {
+      formattedValue = formatters.currency.format(value);
     }
 
     setNewBill(prev => ({
@@ -65,7 +81,6 @@ const Bills = () => {
       [name]: formattedValue
     }));
 
-    // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -109,17 +124,22 @@ const Bills = () => {
     }
 
     try {
+      const billData = {
+        ...newBill,
+        value: formatters.currency.parse(newBill.value) // Converte para formato decimal
+      };
+
       if (editingBill) {
-        const updatedBill = billService.updateBill(editingBill.id, newBill);
+        const updatedBill = billService.updateBill(editingBill.id, billData);
         setBills(bills.map(b => b.id === editingBill.id ? updatedBill : b));
       } else {
-        const savedBill = billService.saveBill(newBill);
+        const savedBill = billService.saveBill(billData);
         setBills([...bills, savedBill]);
       }
       
       handleCloseDialog();
     } catch (error) {
-      console.error('Error saving/updating bill:', error);
+      console.error('Erro ao salvar/atualizar boleto:', error);
     }
   };
 
@@ -151,6 +171,10 @@ const Bills = () => {
     }
   };
 
+  if (isLoading) {
+    return <Loading message="Carregando boletos..." />;
+  }
+
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>
       <Box sx={{ 
@@ -181,7 +205,7 @@ const Bills = () => {
                   Bloco {bill.block} - Apto {bill.apartment}
                 </Typography>
                 <Typography variant="h5" sx={{ mt: 2, color: 'primary.dark' }}>
-                  {bill.value}
+                  {formatters.currency.format(bill.value)}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Vencimento: {new Date(bill.dueDate).toLocaleDateString()}
@@ -301,6 +325,9 @@ const Bills = () => {
                   error={!!errors.value}
                   helperText={errors.value || 'Campo obrigatório'}
                   required
+                  inputProps={{
+                    maxLength: 20
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

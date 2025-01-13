@@ -13,16 +13,25 @@ import {
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { billService } from '../../services/billService';
+import Loading from '../../components/Loading';
 
 const Residents = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [userBills, setUserBills] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadBills = () => {
-      const bills = billService.getBillsByUser(user);
-      setUserBills(bills);
+    const loadBills = async () => {
+      try {
+        setIsLoading(true);
+        const bills = billService.getBillsByUser(user);
+        setUserBills(bills);
+      } catch (error) {
+        console.error('Erro ao carregar boletos:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadBills();
@@ -40,6 +49,10 @@ const Residents = () => {
       currency: 'BRL'
     }).format(value);
   };
+
+  if (isLoading) {
+    return <Loading message="Carregando seus boletos..." />;
+  }
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 } }}>

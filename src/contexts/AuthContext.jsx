@@ -1,6 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
-
-const AuthContext = createContext({});
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export const ROLES = {
   SUPER_ADMIN: 'SUPER_ADMIN',
@@ -8,36 +6,69 @@ export const ROLES = {
   USER: 'USER'
 };
 
-export const AuthProvider = ({ children }) => {
-  // Development user for testing - change role here to test different permissions
-  const devUser = {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    document: '123.456.789-00',
-    block: 'A',
-    apartment: '101',
-    role: ROLES.MANAGER, // Changed to MANAGER to access Bills
-    building: 'Solar Building'
-  };
+const AuthContext = createContext({});
 
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : devUser;
+    return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+
+  const login = async (credentials) => {
+    // Simulação de login - Depois substituir por chamada real à API
+    if (credentials.email && credentials.password) {
+      // Usuário de exemplo
+      const loggedUser = {
+        id: '1',
+        name: 'Usuário Teste',
+        email: credentials.email,
+        role: ROLES.USER,
+        building: 'Edifício Teste',
+        block: 'A',
+        apartment: '101'
+      };
+
+      setUser(loggedUser);
+      return loggedUser;
+    }
+    throw new Error('Credenciais inválidas');
+  };
+
+  const register = async (userData) => {
+    // Simulação de registro - Depois substituir por chamada real à API
+    if (userData.email && userData.password) {
+      // Simula sucesso no registro
+      return {
+        id: Math.random().toString(36).substr(2, 9),
+        ...userData
+      };
+    }
+    throw new Error('Dados inválidos');
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, ROLES }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        login, 
+        logout, 
+        register,
+        ROLES,
+        isAuthenticated: !!user 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

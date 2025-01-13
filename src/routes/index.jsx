@@ -6,38 +6,34 @@ import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 
 // Pages
+import Login from '../pages/Auth/Login';
+import Register from '../pages/Auth/Register';
 import Bills from '../pages/Bills';
 import Residents from '../pages/Residents';
 import BillView from '../pages/Residents/BillView';
 import Dashboard from '../pages/Dashboard';
 
 const AppRoutes = () => {
-  const { user, ROLES } = useAuth();
+  const { user } = useAuth();
 
-  const PrivateRoute = ({ children, roles }) => {
-    if (!user) {
-      return <Navigate to="/login" replace />;
-    }
-
-    if (roles && !roles.includes(user.role)) {
-      return <Navigate to="/residents" replace />;
-    }
-
-    return children;
-  };
+  // Redireciona usuário logado para dashboard se tentar acessar login/register
+  if (user && ['/login', '/register'].includes(window.location.pathname)) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      {/* Rotas públicas */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      {/* Rotas protegidas */}
+      <Route 
+        path="/" 
+        element={user ? <Layout /> : <Navigate to="/login" replace />}
+      >
         <Route index element={<Dashboard />} />
-        <Route 
-          path="bills" 
-          element={
-            <PrivateRoute roles={[ROLES.SUPER_ADMIN, ROLES.MANAGER]}>
-              <Bills />
-            </PrivateRoute>
-          } 
-        />
+        <Route path="bills" element={<Bills />} />
         <Route path="residents">
           <Route index element={<Residents />} />
           <Route path=":billId" element={<BillView />} />

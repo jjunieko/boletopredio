@@ -12,24 +12,37 @@ import {
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { billService } from '../../services/billService';
+import Loading from '../../components/Loading';
 
 const BillView = () => {
   const { billId } = useParams();
   const navigate = useNavigate();
   const [bill, setBill] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadBill = () => {
-      const foundBill = billService.getBillById(billId);
-      if (foundBill) {
-        setBill(foundBill);
-      } else {
-        navigate('/residents');
+    const loadBill = async () => {
+      try {
+        setIsLoading(true);
+        const foundBill = billService.getBillById(billId);
+        if (foundBill) {
+          setBill(foundBill);
+        } else {
+          navigate('/residents');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar boleto:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadBill();
   }, [billId, navigate]);
+
+  if (isLoading) {
+    return <Loading message="Carregando detalhes do boleto..." />;
+  }
 
   if (!bill) return null;
 
